@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto/SQLITE.dart' as holi;
+import 'package:proyectofinal/database/db.dart' as data;
+import 'database/db.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -88,13 +89,16 @@ class Registro extends StatelessWidget {
                 padding: EdgeInsets.only(left: 50, right: 50, top: 30),
                 child: TextField(
                   controller: Controlador2,
+                  obscureText: true,
                   decoration: InputDecoration(
                       hintText: "Contraseña", border: OutlineInputBorder()),
+                    
                 )),
             Container(
                 padding: EdgeInsets.only(left: 50, right: 50, top: 30),
                 child: TextField(
                   controller: Controlador3,
+                  obscureText: true,
                   decoration: InputDecoration(
                       hintText: "Repetir Contraseña",
                       border: OutlineInputBorder()),
@@ -103,9 +107,9 @@ class Registro extends StatelessWidget {
               padding: EdgeInsets.only(left: 50, right: 50, top: 30),
               child: RaisedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return Login();
-                  }));
+                  print(Controlador1.text);
+                  print(Controlador2.text);
+                  data.main(new data.User(id: 21,username: Controlador1.text,password: Controlador2.text));
                 },
                 child: Text("Registrar"),
                 color: Colors.orange,
