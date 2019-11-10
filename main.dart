@@ -40,9 +40,8 @@ class Login extends StatelessWidget {
               padding: EdgeInsets.only(left: 50, right: 50, top: 30),
               child: RaisedButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return Menu();
-                  }));
+
+                  
                 },
                 child: Text("Ingresar"),
                 color: Colors.orange,
@@ -107,9 +106,13 @@ class Registro extends StatelessWidget {
               padding: EdgeInsets.only(left: 50, right: 50, top: 30),
               child: RaisedButton(
                 onPressed: () {
-                  print(Controlador1.text);
-                  print(Controlador2.text);
-                  data.main(new data.User(id: 21,username: Controlador1.text,password: Controlador2.text));
+                  if(Controlador2.text == Controlador3.text) {
+                       data.main(new data.User(id: 0,username: Controlador1.text,password: Controlador2.text));
+                    }else{
+                      mostrarAlerta(
+                          context: context, mensaje: 'Las contraseñas deben coincidir.');
+                    }
+                 
                 },
                 child: Text("Registrar"),
                 color: Colors.orange,
@@ -182,4 +185,28 @@ class Menu extends StatelessWidget {
       ),
     );
   }
+}
+void mostrarAlerta({BuildContext context, String mensaje}) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: new Text("Error."),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(mensaje),
+
+          ],
+        ),
+        //
+        actions: <Widget>[
+          FlatButton(
+            child: Text("Aceptar"),
+            onPressed: () {},
+          ),
+        ],
+      );
+    },
+  );
 }

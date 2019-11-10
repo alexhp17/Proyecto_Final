@@ -21,10 +21,12 @@ void main(User alexito) async {
 
   Future<void> insertUser(User user) async {  // Creamos nuestra funcion para insertar en la tabla
     final Database db = await database;
-
+    List<Map<String, dynamic>> maps = await db.query('users');
+    user.id= maps.length+1;
     // Insertamos el usuario en la tabla correcta.
     // Se usa 'ConflictAlgorithm' por si se inserta el mismo muchas veces
     // asi se reemplaza con el anterior
+    
     await db.insert(
       'users',
       user.toMap(),
@@ -38,7 +40,7 @@ void main(User alexito) async {
 
     // Consultamos la tabla Usuarios en la base de datos
     final List<Map<String, dynamic>> maps = await db.query('users');
-
+    print(maps.length);
     // Convertimos el List<Map<String, dynamic> a una List<User>.
     return List.generate(maps.length, (i) {
       return User(
@@ -99,7 +101,7 @@ void main(User alexito) async {
 }
 
 class User { // En esta clase creamos la estructura de datos del Usuario
-  final int id;
+  int id;
   final String username;
   final String password;
 
