@@ -7,7 +7,7 @@ void main() {
     home: Login(),
   ));
 }
-
+//LOGIN
 class Login extends StatelessWidget {
   // This widget is the root of your application.
   final Controlador1 = TextEditingController();
@@ -33,7 +33,20 @@ class Login extends StatelessWidget {
                   controller: Controlador2,
                   decoration: InputDecoration(
                       hintText: "Contraseña", border: OutlineInputBorder()),
-                ))
+                )
+            ),
+            Container(
+              padding: EdgeInsets.only(left: 50, right: 50, top: 30),
+              child: RaisedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return Menu();
+                  }));
+                },
+                child: Text("Ingresar"),
+                color: Colors.orange,
+              ),
+            )
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -85,15 +98,27 @@ class Registro extends StatelessWidget {
                   decoration: InputDecoration(
                       hintText: "Repetir Contraseña",
                       border: OutlineInputBorder()),
-                ))
+                )),
+            Container(
+              padding: EdgeInsets.only(left: 50, right: 50, top: 30),
+              child: RaisedButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return Login();
+                  }));
+                },
+                child: Text("Registrar"),
+                color: Colors.orange,
+              ),
+            )
           ],
         ),
       ),
     );
   }
 }
-class Menu extends StatelessWidget{
-
+//MENU
+class Menu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -103,8 +128,53 @@ class Menu extends StatelessWidget{
           title: Text("Menú"),
         ),
         drawer: Drawer(
-          child: Icon(Icons.add),
-        ),
+            child: ListView(
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              accountEmail: Text("raul_chulets@live.com"),
+              accountName: Text("Rulero76"),
+              currentAccountPicture: CircleAvatar(
+                child: Text("R"),
+              ),
+            ),
+            ListTile(
+              title: Text("Agregar Aspirante"),
+              leading: Icon(
+                Icons.favorite,
+                color: Colors.blue,
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text("Sincronizar"),
+              leading: Icon(
+                Icons.bookmark,
+                color: Colors.blue,
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text("No sincronizados"),
+              leading: Icon(
+                Icons.camera_alt,
+                color: Colors.blue,
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text("Cerrar sesión"),
+              leading: Icon(
+                Icons.map,
+                color: Colors.blue,
+              ),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return Login();
+                }));
+              },
+            ),
+          ],
+        )),
       ),
     );
   }
