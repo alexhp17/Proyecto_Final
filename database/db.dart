@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-
-void main(User alexito) async {
+Future<Database> crearDB() async{
   final database = openDatabase(
     // Se establece la ruta de la base de datos.
     join(await getDatabasesPath(), 'curso.db'),
@@ -18,9 +17,40 @@ void main(User alexito) async {
 
     version: 1, // Empezamos en la version 1 xdd
   );
+  return database;
+}
+Future<void> deleteUser(int id) async {
+    // Get a reference to the database.
+    final db = await crearDB();
 
-  Future<void> insertUser(User user) async {  // Creamos nuestra funcion para insertar en la tabla
-    final Database db = await database;
+    // Se remueve el ususario de la base de datos
+    await db.delete(
+      'users',
+      // Se busca mediante ID el usuario de entrada para eliminarlo en la base de datos
+      where: "id = ?",
+      // Prevenimos inyeccion SQL
+      whereArgs: [id],
+    );
+  }
+
+Future<void> updateUser(User user) async {
+    // Get a reference to the database.
+    final db = await crearDB();
+
+    // Actualizamos el usuario obtenido.
+    await db.update(
+      'users',
+      user.toMap(),
+      // Nos aseguramos que el usuario de entrada coincida con uno en la base de datos por medio del ID
+      where: "id = ?",
+      // Se utiliza whereArgs para prevenir una inyecion SQL
+      whereArgs: [user.id],
+    );
+  }
+
+Future<void> insertUser(User user) async {  // Creamos nuestra funcion para insertar en la tabla
+    final Database db = await crearDB();
+  
     List<Map<String, dynamic>> maps = await db.query('users');
     user.id= maps.length+1;
     // Insertamos el usuario en la tabla correcta.
@@ -33,10 +63,9 @@ void main(User alexito) async {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
-
-  Future<List<User>> users() async {
+ Future<List<User>> users() async {
     // Get a reference to the database.
-    final Database db = await database;
+    final Database db = await crearDB();
 
     // Consultamos la tabla Usuarios en la base de datos
     final List<Map<String, dynamic>> maps = await db.query('users');
@@ -50,55 +79,6 @@ void main(User alexito) async {
       );
     });
   }
-
-  Future<void> updateUser(User user) async {
-    // Get a reference to the database.
-    final db = await database;
-
-    // Actualizamos el usuario obtenido.
-    await db.update(
-      'users',
-      user.toMap(),
-      // Nos aseguramos que el usuario de entrada coincida con uno en la base de datos por medio del ID
-      where: "id = ?",
-      // Se utiliza whereArgs para prevenir una inyecion SQL
-      whereArgs: [user.id],
-    );
-  }
-
-  Future<void> deleteUser(int id) async {
-    // Get a reference to the database.
-    final db = await database;
-
-    // Se remueve el ususario de la base de datos
-    await db.delete(
-      'users',
-      // Se busca mediante ID el usuario de entrada para eliminarlo en la base de datos
-      where: "id = ?",
-      // Prevenimos inyeccion SQL
-      whereArgs: [id],
-    );
-  }
-
-  // Metemos a alexito a la base de datos con el metodo antes creado
-  await insertUser(alexito);
-
-  // Imprimimos la lista de usuarios, por ahora solo sale Alexito
-  print(await users());
-
-  // Actualizamos la contraseña de Alexito con el metodo antes creado
-  
- // await updateUser(alexito);
-
-  // Imprimimos la informacion actualizada
-  //print(await users());
-
-  // Lo eliminamos alv
-  //await deleteUser(alexito.id);
-
-  // Imprimimos para ver que ya no este el wey
-  //print(await users());
-}
 
 class User { // En esta clase creamos la estructura de datos del Usuario
   int id;

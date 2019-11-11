@@ -16,6 +16,8 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var height = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     return MaterialApp(
       home: Scaffold(
         body: Column(
@@ -40,7 +42,6 @@ class Login extends StatelessWidget {
               padding: EdgeInsets.only(left: 50, right: 50, top: 30),
               child: RaisedButton(
                 onPressed: () {
-
                   
                 },
                 child: Text("Ingresar"),
@@ -74,7 +75,7 @@ class Registro extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Column(
+        body: ListView(
           children: <Widget>[
             Container(
               padding: EdgeInsets.only(top: 250, left: 50, right: 50),
@@ -105,9 +106,10 @@ class Registro extends StatelessWidget {
             Container(
               padding: EdgeInsets.only(left: 50, right: 50, top: 30),
               child: RaisedButton(
-                onPressed: () {
+                onPressed: () async{
                   if(Controlador2.text == Controlador3.text) {
-                       data.main(new data.User(id: 0,username: Controlador1.text,password: Controlador2.text));
+                       await data.insertUser(new data.User(id: 0,username: Controlador1.text,password: Controlador2.text));
+                       print(await data.users());
                     }else{
                       mostrarAlerta(
                           context: context, mensaje: 'Las contraseñas deben coincidir.');
