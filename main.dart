@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:proyectofinal/database/db.dart' as data;
-import 'database/db.dart';
-
+import 'package:proyecto/SQLITEPrueba.dart';
+import 'package:proyecto/db.dart' as data;
+import 'db.dart';
+import 'package:sqflite/sqflite.dart' ;
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart';
 void main() {
   runApp(MaterialApp(
     title: 'Navigation Basics',
@@ -36,13 +39,28 @@ class Login extends StatelessWidget {
                   controller: Controlador2,
                   decoration: InputDecoration(
                       hintText: "Contraseña", border: OutlineInputBorder()),
+                  obscureText: true,
                 )
             ),
             Container(
               padding: EdgeInsets.only(left: 50, right: 50, top: 30),
               child: RaisedButton(
-                onPressed: () {
-                  
+                onPressed: () async {
+                  //Validamos que el usuario y contraseña sean los mismos que
+                  //En la base de datos
+
+                  //En caso de que El usuario o contraseña no se valide en la
+                  //Base de datos imprimimos un error en la interfaz
+                  if(await data.Logearse(data.User(id: 0,username:Controlador1.text ,password:Controlador2.text ))== null){
+                    mostrarAlerta(context: context,mensaje: "usuario o contraseña incorrecta");
+                  }
+                  //En caso de ser validados por la base de datos pasamos al Menu
+                  else{
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return Menu();
+                    }));
+                  }
+
                 },
                 child: Text("Ingresar"),
                 color: Colors.orange,
@@ -95,7 +113,7 @@ class _RegistroState extends State<Registro> {
                   obscureText: true,
                   decoration: InputDecoration(
                       hintText: "Contraseña", border: OutlineInputBorder()),
-                    
+
                 )),
             Container(
                 padding: EdgeInsets.only(left: 50, right: 50, top: 30),
@@ -110,14 +128,28 @@ class _RegistroState extends State<Registro> {
               padding: EdgeInsets.only(left: 50, right: 50, top: 30),
               child: RaisedButton(
                 onPressed: () async{
-                  if(Controlador2.text == Controlador3.text) {
-                       await data.insertUser(new data.User(id: 0,username: Controlador1.text,password: Controlador2.text));
-                       print(await data.users());
-                    }else{
-                      mostrarAlerta(
-                          context: context, mensaje: 'Las contraseñas deben coincidir.');
+                  //Si las contraseñas son iguales y el usuario esta disponible
+                  //Entonces agregamos al usuario
+                  if((Controlador2.text==Controlador3.text)
+                      &&(await data.Validar(data.User(id: 0,username: Controlador1.text,password: Controlador2.text)))==null) {
+
+                    //Una vez cumplida la condición agregamos al usuario
+                    await data.insertUser(new data.User(id: 0,username: Controlador1.text,password: Controlador2.text));
+                    //Cuando agregamos al usuario esta linea
+                    //Imprime en consola la lista de usuarios y contraseñas de estos
+                    print(await data.users());
+                  }else{
+                    //En caso de tener el campo "Contraseña" y "Repetir contraseña" distintos
+                    //Mostramos una alerta de error
+                    if(Controlador2.text != Controlador3.text){
+                    mostrarAlerta(
+                        context: context, mensaje: 'Las contraseñas deben coincidir.');
+                    //En caso de que el usuario ya exista mostramos una alerta de error
+                  }else if(await data.Validar(data.User(id: 0,username: Controlador1.text,password: null)) != null){
+                      mostrarAlerta(context: context,mensaje:"Usuario no disponible.");
                     }
-                 
+                  }
+
                 },
                 child: Text("Registrar"),
                 color: Colors.orange,
@@ -141,52 +173,52 @@ class Menu extends StatelessWidget {
         ),
         drawer: Drawer(
             child: ListView(
-          children: <Widget>[
-            UserAccountsDrawerHeader(
-              accountEmail: Text("raul_chulets@live.com"),
-              accountName: Text("Rulero76"),
-              currentAccountPicture: CircleAvatar(
-                child: Text("R"),
-              ),
-            ),
-            ListTile(
-              title: Text("Agregar Aspirante"),
-              leading: Icon(
-                Icons.favorite,
-                color: Colors.blue,
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text("Sincronizar"),
-              leading: Icon(
-                Icons.bookmark,
-                color: Colors.blue,
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text("No sincronizados"),
-              leading: Icon(
-                Icons.camera_alt,
-                color: Colors.blue,
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text("Cerrar sesión"),
-              leading: Icon(
-                Icons.map,
-                color: Colors.blue,
-              ),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return Login();
-                }));
-              },
-            ),
-          ],
-        )),
+              children: <Widget>[
+                UserAccountsDrawerHeader(
+                  accountEmail: Text("raul_chulets@live.com"),
+                  accountName: Text("Rulero76"),
+                  currentAccountPicture: CircleAvatar(
+                    child: Text("R"),
+                  ),
+                ),
+                ListTile(
+                  title: Text("Agregar Aspirante"),
+                  leading: Icon(
+                    Icons.favorite,
+                    color: Colors.blue,
+                  ),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text("Sincronizar"),
+                  leading: Icon(
+                    Icons.bookmark,
+                    color: Colors.blue,
+                  ),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text("No sincronizados"),
+                  leading: Icon(
+                    Icons.camera_alt,
+                    color: Colors.blue,
+                  ),
+                  onTap: () {},
+                ),
+                ListTile(
+                  title: Text("Cerrar sesión"),
+                  leading: Icon(
+                    Icons.map,
+                    color: Colors.blue,
+                  ),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return Login();
+                    }));
+                  },
+                ),
+              ],
+            )),
       ),
     );
   }
