@@ -50,13 +50,13 @@ Future<void> updateUser(User user) async {
 
 Future<void> insertUser(User user) async {  // Creamos nuestra funcion para insertar en la tabla
     final Database db = await crearDB();
-  
     List<Map<String, dynamic>> maps = await db.query('users');
     user.id= maps.length+1;
     // Insertamos el usuario en la tabla correcta.
     // Se usa 'ConflictAlgorithm' por si se inserta el mismo muchas veces
     // asi se reemplaza con el anterior
     
+   // print(db.rawQuery("Select username FROM users WHERE username='$user.username'"));
     await db.insert(
       'users',
       user.toMap(),

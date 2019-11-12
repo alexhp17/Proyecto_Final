@@ -63,9 +63,12 @@ class Login extends StatelessWidget {
     );
   }
 }
+class Registro extends StatefulWidget {
+  @override
+  _RegistroState createState() => _RegistroState();
+}
 
-//REGISTRO
-class Registro extends StatelessWidget {
+class _RegistroState extends State<Registro> {
   final Controlador1 = TextEditingController();
   final Controlador2 = TextEditingController();
   final Controlador3 = TextEditingController();
