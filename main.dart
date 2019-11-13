@@ -1,11 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:proyectofinal/db.dart' as data;
-import 'db.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart';
+import 'package:proyectofinal/database/db.dart' as data;
+import 'package:proyectofinal/vistas/agregarAspirante.dart' as aspView;
 
 void main() {
   runApp(MaterialApp(
@@ -15,8 +11,13 @@ void main() {
 }
 
 //LOGIN
-class Login extends StatelessWidget {
-  // This widget is the root of your application.
+class Login extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+    // This widget is the root of your application.
   final Controlador1 = TextEditingController();
   final Controlador2 = TextEditingController();
 
@@ -30,14 +31,19 @@ class Login extends StatelessWidget {
           title: Text("Login"),
           backgroundColor: Color.fromRGBO(118, 41, 51, 1),
         ),
-        body: Column(
+        body: ListView(
+          children: <Widget>[
+            Column(
           children: <Widget>[
             Container(
-              child: Image.asset('assets/upiiz.png',
-                scale: 25,),
+              height: height*.3,
+              decoration: BoxDecoration(),
+              child: Image.asset('assets/upiiz.png', fit: BoxFit.cover,
+              ),
             ),
+            SizedBox(height: height*.03,),
             Container(
-              padding: EdgeInsets.only(left: 50, right: 50),
+              padding: EdgeInsets.only(left: width*.1, right: width*.1),
               child: TextField(
                 controller: Controlador1,
                 decoration: InputDecoration(
@@ -45,7 +51,7 @@ class Login extends StatelessWidget {
               ),
             ),
             Container(
-                padding: EdgeInsets.only(left: 50, right: 50, top: 30),
+                padding: EdgeInsets.only(left: width*.1, right: width*.1, top: width*.1),
                 child: TextField(
                   controller: Controlador2,
                   decoration: InputDecoration(
@@ -53,7 +59,7 @@ class Login extends StatelessWidget {
                   obscureText: true,
                 )),
             Container(
-              padding: EdgeInsets.only(left: 50, right: 50, top: 30),
+              padding: EdgeInsets.only(left: width*.15, right: width*.15, top: width*.1),
               child: RaisedButton(
                 onPressed: () async {
                   //Validamos que el usuario y contraseña sean los mismos que
@@ -74,7 +80,7 @@ class Login extends StatelessWidget {
                   else {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return Menu();
+                      return menu(context,Controlador1.text);
                     }));
                   }
                 },
@@ -85,6 +91,8 @@ class Login extends StatelessWidget {
                 color: Color.fromRGBO(118, 41, 51, 1),
               ),
             )
+          ],
+        ),
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -138,7 +146,7 @@ class _RegistroState extends State<Registro> {
                 scale: 25,),
             ),
             Container(
-              padding: EdgeInsets.only(left: 50, right: 50),
+              padding: EdgeInsets.only(left: width*.1, right: width*.1),
               child: TextField(
                 controller: Controlador1,
                 decoration: InputDecoration(
@@ -182,6 +190,7 @@ class _RegistroState extends State<Registro> {
                     //Cuando agregamos al usuario esta linea
                     //Imprime en consola la lista de usuarios y contraseñas de estos
                     print(await data.users());
+                    AlertaExitoR(context: context,mensaje: "¡Registro exitoso!");
                   } else {
                     //En caso de tener el campo "Contraseña" y "Repetir contraseña" distintos
                     //Mostramos una alerta de error
@@ -214,12 +223,8 @@ class _RegistroState extends State<Registro> {
   }
 }
 
-//MENU
-class Menu extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return new MaterialApp(
+Widget menu(BuildContext context, String nombre){
+      return new MaterialApp(
         theme: ThemeData(
             primaryColor: Color.fromRGBO(118, 41, 51, 1)
 
@@ -233,10 +238,9 @@ class Menu extends StatelessWidget {
             child: ListView(
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountEmail: Text("raul_chulets@live.com"),
-              accountName: Text("Rulero76"),
+              accountName: Text("$nombre"),
               currentAccountPicture: CircleAvatar(
-                child: Text("R",
+                child: Text("R", 
                   style: TextStyle(color: Color.fromRGBO(118, 41, 51, 1)),),
                 backgroundColor: Colors.white,
               ),
@@ -281,8 +285,8 @@ class Menu extends StatelessWidget {
         )),
       ),
     );
-  }
 }
+
 
 void mostrarAlerta({BuildContext context, String mensaje}) {
   showDialog(
@@ -290,6 +294,7 @@ void mostrarAlerta({BuildContext context, String mensaje}) {
     builder: (context) {
       return AlertDialog(
         title: new Text("Error."),
+        
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -300,7 +305,39 @@ void mostrarAlerta({BuildContext context, String mensaje}) {
         actions: <Widget>[
           FlatButton(
             child: Text("Aceptar"),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+void AlertaExitoR({BuildContext context, String mensaje}) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: new Text("Éxito."),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(mensaje),
+          ],
+        ),
+        //
+        actions: <Widget>[
+          FlatButton(
+            child: Text("Aceptar"),
+            onPressed: () {
+              Navigator.pop(context);
+              final route = MaterialPageRoute(
+                builder: (context)=>Login(),
+              );
+              Navigator.push(context, route);
+            },
           ),
         ],
       );

@@ -3,12 +3,12 @@ import 'dart:math';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:proyecto/db.dart';
+import 'package:proyectofinal/database/db.dart' as data;
 
 
 Future<void> deleteUser(int id) async {
   // Get a reference to the database.
-  final db = await crearDB();
+  final db = await data.crearDB();
 
   // Se remueve el ususario de la base de datos
   await db.delete(
@@ -22,7 +22,7 @@ Future<void> deleteUser(int id) async {
 
 Future<void> updateUser(User user) async {
   // Get a reference to the database.
-  final db = await crearDB();
+  final db = await data.crearDB();
 
   // Actualizamos el usuario obtenido.
   await db.update(
@@ -36,7 +36,7 @@ Future<void> updateUser(User user) async {
 }
 
 Future<void> insertUser(User user) async {  // Creamos nuestra funcion para insertar en la tabla
-  final Database db = await crearDB();
+  final Database db = await data.crearDB();
   List<Map<String, dynamic>> maps = await db.query('users');
   user.id= maps.length+1;
   // Insertamos el usuario en la tabla correcta.
@@ -52,7 +52,7 @@ Future<void> insertUser(User user) async {  // Creamos nuestra funcion para inse
 }
 Future<List<User>> users() async {
   // Get a reference to the database.
-  final Database db = await crearDB();
+  final Database db = await data.crearDB();
 
   // Consultamos la tabla Usuarios en la base de datos
   final List<Map<String, dynamic>> maps = await db.query('users');
@@ -88,7 +88,7 @@ class User { // En esta clase creamos la estructura de datos del Usuario
 }
 
 Future<User> Logearse(User Usuario) async{
-  final Database db = await crearDB();
+  final Database db = await data.crearDB();
   var nombre = Usuario.username;
   var pass = Usuario.password;
   var res = await db.rawQuery("SELECT * FROM users WHERE username = '$nombre' and password = '$pass'");
@@ -100,7 +100,7 @@ Future<User> Logearse(User Usuario) async{
 }
 
 Future<User> Validar(User Usuario) async{
-  final Database db = await crearDB();
+  final Database db = await data.crearDB();
   var nombre = Usuario.username;
   var pass = Usuario.password;
   var res = await db.rawQuery("SELECT * FROM users WHERE username = '$nombre'");
